@@ -35,7 +35,7 @@ public class Animal {
         }
 
         if (direction == MoveDirection.BACKWARD){
-            Vector2d tmp = this.position.add(this.orientation.toUnitVector());
+            Vector2d tmp = this.position.subtract(this.orientation.toUnitVector());
 
             if (upperRight.lowerLeft(tmp).equals(tmp) && lowerLeft.upperRight(tmp).equals(tmp)){
                 this.position = tmp;

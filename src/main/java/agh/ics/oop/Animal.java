@@ -5,7 +5,7 @@ public class Animal {
     private Vector2d position = new Vector2d(2,2);
 
     private final Vector2d lowerLeft = new Vector2d(0,0);
-    private final Vector2d upperRight = new Vector2d(4, 4);
+    private final Vector2dd upperRight = new Vector2d(4, 4);
 
     public String toString(){
         return "Zwierzak jest na pozycji " + position.toString() + ", w kierunku " + orientation.toString() + ".";

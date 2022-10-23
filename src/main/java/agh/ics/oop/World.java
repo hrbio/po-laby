@@ -1,20 +1,22 @@
 package agh.ics.oop;
 
 public class World {
+
+    private static OptionsParser optionsParser = new OptionsParser();
     public static void main(String[] args){
 
-        OptionsParser optionsParser = new OptionsParser();
-
-        String[] kierunki = {"r", "r", "b", "b"};
+        String[] kierunki = {"r", "r", "r", "r", "r", "r"};
 
         MoveDirection[] directions = optionsParser.parse(kierunki);
 
-        Animal zwierzak = new Animal();
+        Animal antek = new Animal();
 
         for (MoveDirection direction : directions){
-            zwierzak.move(direction);
+            antek.move(direction);
         }
 
-        System.out.println(zwierzak);
+        System.out.println(antek);
+        System.out.println("Antek się kręci :)");
+
     }
 }

@@ -1,10 +1,10 @@
 package agh.ics.oop;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GrassField extends AbstractWorldMap{
-    private final List<Grass> grasses = new ArrayList<>();
+    private final Map<Vector2d, Grass> grasses = new HashMap<>();
     private int amount;
     private int boundary;
 
@@ -23,7 +23,7 @@ public class GrassField extends AbstractWorldMap{
         while (isOccupied(tmp)){
             tmp = getRandomPosition(this.boundary);
         }
-        grasses.add(new Grass(tmp));
+        grasses.put(tmp, new Grass(tmp));
     }
 
     public Vector2d getRandomPosition(int boundary){
@@ -37,10 +37,7 @@ public class GrassField extends AbstractWorldMap{
     }
 
     public boolean isOccupiedByGrass(Vector2d position){
-        for (Grass grass: grasses){
-            if (grass.getPosition().equals(position)) return true;
-        }
-        return false;
+        return grasses.containsKey(position);
     }
 
     public boolean isOccupied(Vector2d position) {
@@ -48,10 +45,7 @@ public class GrassField extends AbstractWorldMap{
     }
 
     public Grass grassAt(Vector2d position){
-        for (Grass grass: grasses){
-            if (grass.getPosition().equals(position)) return grass;
-        }
-        return null;
+        return grasses.get(position);
     }
 
     public Object objectAt(Vector2d position){
@@ -60,25 +54,28 @@ public class GrassField extends AbstractWorldMap{
     }
 
     public Vector2d getLowerBoundary(){
-        Vector2d out = animals.get(0).getPosition();
-        for (Animal animal: animals){
-            out = out.lowerLeft(animal.getPosition());
+        Vector2d out = null;
+        for (Vector2d position: animals.keySet()){
+            if (out == null) out = position;
+            else out = out.lowerLeft(position);
         }
 
-        for (Grass grass: grasses){
-            out = out.lowerLeft(grass.getPosition());
+        for (Vector2d position: grasses.keySet()){
+            if (out == null) out = position;
+            else out = out.lowerLeft(position);
         }
         return out;
     }
 
     public Vector2d getUpperBoundary(){
-        Vector2d out = animals.get(0).getPosition();
-        for (Animal animal: animals){
-            out = out.upperRight(animal.getPosition());
+        Vector2d out = null;
+        for (Vector2d position: animals.keySet()){
+            if (out == null) out = position;
+            else out = out.upperRight(position);
         }
-
-        for (Grass grass: grasses){
-            out = out.upperRight(grass.getPosition());
+        for (Vector2d position: grasses.keySet()){
+            if (out == null) out = position;
+            else out = out.upperRight(position);
         }
         return out;
     }

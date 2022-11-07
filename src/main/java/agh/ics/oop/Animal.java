@@ -1,10 +1,15 @@
 package agh.ics.oop;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Animal {
 
 
     private MapDirection orientation = MapDirection.NORTH;
     private Vector2d position = new Vector2d(2,2);
+
+    private final List<IPositionChangeObserver> observers = new ArrayList<>();
     private IWorldMap map;
     public Animal(IWorldMap map){
         this.map = map;
@@ -30,6 +35,7 @@ public class Animal {
         if (direction == MoveDirection.FORWARD){
             Vector2d tmp = this.position.add(this.orientation.toUnitVector());
             if (map.canMoveTo(tmp)){
+                this.positionChanged(this.position, tmp);
                 this.position = tmp;
             }
         }
@@ -47,9 +53,24 @@ public class Animal {
         if (direction == MoveDirection.BACKWARD){
             Vector2d tmp = this.position.subtract(this.orientation.toUnitVector());
             if (map.canMoveTo(tmp)){
+                this.positionChanged(this.position, tmp);
                 this.position = tmp;
             }
         }
+    }
+
+    public void addObserver(IPositionChangeObserver observer){
+        this.observers.add(observer);
+    }
+
+    private void positionChanged(Vector2d oldPosition, Vector2d newPosition){
+        for (IPositionChangeObserver observer: observers){
+            observer.positionChanged(oldPosition, newPosition);
+        }
+    }
+
+    public void removeObserver(IPositionChangeObserver observer){
+        this.observers.remove(observer);
     }
 
     public Vector2d getPosition(){

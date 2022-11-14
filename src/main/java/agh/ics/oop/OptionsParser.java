@@ -5,10 +5,13 @@ import java.util.Arrays;
 public class OptionsParser {
 
     private boolean isCorrect(String direction){
-        return switch (direction) {
+        boolean out =  switch (direction) {
             case "f", "forward", "r", "right", "b", "backward", "l", "left" -> true;
             default -> false;
         };
+
+        if (!out) throw new IllegalArgumentException(direction + " is not legal move specification");
+        return true;
     }
 
     private MoveDirection getDirection(String direction){

@@ -1,18 +1,19 @@
 package agh.ics.oop;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver{
 
     protected final Map<Vector2d, Animal> animals = new HashMap<>();
+    protected MapBoundary mapBoundary = new MapBoundary();
     abstract public boolean canMoveTo(Vector2d position);
 
     public boolean place(Animal animal){
-        if (!canMoveTo(animal.getPosition())) return false;
+        if (!canMoveTo(animal.getPosition())) throw new IllegalArgumentException("Can't place animal on position " + animal.getPosition());
         animal.addObserver(this);
+        animal.addObserver(this.mapBoundary);
+        this.mapBoundary.addVector(animal.getPosition());
         animals.put(animal.getPosition(), animal);
         return true;
     };

@@ -24,6 +24,7 @@ public class GrassField extends AbstractWorldMap{
             tmp = getRandomPosition(this.boundary);
         }
         grasses.put(tmp, new Grass(tmp));
+        this.mapBoundary.addVector(tmp);
     }
 
     public Vector2d getRandomPosition(int boundary){
@@ -54,6 +55,7 @@ public class GrassField extends AbstractWorldMap{
     }
 
     public Vector2d getLowerBoundary(){
+        this.mapBoundary.getLowerBoundary();
         Vector2d out = null;
         for (Vector2d position: animals.keySet()){
             if (out == null) out = position;
@@ -68,6 +70,7 @@ public class GrassField extends AbstractWorldMap{
     }
 
     public Vector2d getUpperBoundary(){
+        this.mapBoundary.getUpperBoundary();
         Vector2d out = null;
         for (Vector2d position: animals.keySet()){
             if (out == null) out = position;

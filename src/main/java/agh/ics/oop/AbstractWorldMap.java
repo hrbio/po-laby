@@ -1,9 +1,15 @@
 package agh.ics.oop;
 
+import javafx.geometry.HPos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
+
 import java.util.HashMap;
 import java.util.Map;
 
-abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver{
+abstract public class AbstractWorldMap implements IWorldMap, IPositionChangeObserver{
 
     protected final Map<Vector2d, Animal> animals = new HashMap<>();
     protected MapBoundary mapBoundary = new MapBoundary();
@@ -43,5 +49,55 @@ abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver{
     public String toString(){
         MapVisualizer mapVisualizer = new MapVisualizer(this);
         return mapVisualizer.draw(getLowerBoundary(), getUpperBoundary());
+    }
+
+    public String objectAtToString(Vector2d position){
+
+        Object object = this.objectAt(position);
+        if (object != null){
+            return object.toString();
+        }
+        return "";
+    }
+
+    public GridPane toGridPane(){
+        GridPane grid = new GridPane();
+        Vector2d lowerBound = getLowerBoundary();
+        Vector2d upperBound = getUpperBoundary();
+
+
+        for (int i = lowerBound.y; i <= upperBound.y; i++){
+            for (int j = lowerBound.x; j <= upperBound.x; j++) {
+
+                Label label = new Label(this.objectAtToString(new Vector2d(j, i)));
+                GridPane.setHalignment(label, HPos.CENTER);
+                grid.add(label, j-lowerBound.x+1, Math.abs(i-upperBound.y)+1, 1, 1);
+            }
+        }
+
+        Label startLabel = new Label("x/y");
+        GridPane.setHalignment(startLabel, HPos.CENTER);
+        grid.add(startLabel, 0, 0, 1, 1);
+
+        for (int i = lowerBound.x; i <= upperBound.x; i++){
+            Label indexLabel = new Label(Integer.toString(i));
+            GridPane.setHalignment(indexLabel, HPos.CENTER);
+            grid.add(indexLabel, i-lowerBound.x+1, 0, 1, 1);
+        }
+
+        for (int i = lowerBound.y; i <= upperBound.y; i++){
+            Label indexLabel = new Label(Integer.toString(i));
+            GridPane.setHalignment(indexLabel, HPos.CENTER);
+            grid.add(indexLabel, 0, Math.abs(i-upperBound.y)+1, 1, 1);
+        }
+
+        for (int i = lowerBound.x; i <= upperBound.x+1; i++) {
+            grid.getColumnConstraints().add(new ColumnConstraints(20));
+        }
+
+        for (int i = lowerBound.y; i <= upperBound.y+1; i++){
+            grid.getRowConstraints().add(new RowConstraints(20));
+        }
+        return grid;
     }
 }

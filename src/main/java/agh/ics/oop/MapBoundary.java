@@ -47,18 +47,10 @@ public class MapBoundary implements IPositionChangeObserver {
     }
 
     public Vector2d getLowerBoundary(){
-        System.out.println("Lower");
-        System.out.println(xBound.first());
-        System.out.println(yBound.first());
-        System.out.println("-----");
-        return new Vector2d(1,1);
+        return new Vector2d(xBound.first().x,yBound.first().y);
     }
 
     public Vector2d getUpperBoundary(){
-        System.out.println("Upper");
-        System.out.println(xBound.last());
-        System.out.println(yBound.last());
-        System.out.println("-----");
-        return new Vector2d(1,1);
+        return new Vector2d(xBound.last().x,yBound.last().y);
     }
 }

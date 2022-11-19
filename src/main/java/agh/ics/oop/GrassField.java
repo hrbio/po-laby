@@ -55,31 +55,10 @@ public class GrassField extends AbstractWorldMap{
     }
 
     public Vector2d getLowerBoundary(){
-        this.mapBoundary.getLowerBoundary();
-        Vector2d out = null;
-        for (Vector2d position: animals.keySet()){
-            if (out == null) out = position;
-            else out = out.lowerLeft(position);
-        }
-
-        for (Vector2d position: grasses.keySet()){
-            if (out == null) out = position;
-            else out = out.lowerLeft(position);
-        }
-        return out;
+        return mapBoundary.getLowerBoundary();
     }
 
     public Vector2d getUpperBoundary(){
-        this.mapBoundary.getUpperBoundary();
-        Vector2d out = null;
-        for (Vector2d position: animals.keySet()){
-            if (out == null) out = position;
-            else out = out.upperRight(position);
-        }
-        for (Vector2d position: grasses.keySet()){
-            if (out == null) out = position;
-            else out = out.upperRight(position);
-        }
-        return out;
+        return mapBoundary.getUpperBoundary();
     }
 }

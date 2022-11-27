@@ -1,16 +1,18 @@
 package agh.ics.oop;
 
+import agh.ics.oop.gui.GuiElementBox;
 import javafx.geometry.HPos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 
+import javax.swing.*;
+import java.awt.*;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
 abstract public class AbstractWorldMap implements IWorldMap, IPositionChangeObserver{
-
+    private static GuiElementBox guiElementBox = new GuiElementBox();
     protected final Map<Vector2d, Animal> animals = new HashMap<>();
     protected MapBoundary mapBoundary = new MapBoundary();
     abstract public boolean canMoveTo(Vector2d position);
@@ -60,44 +62,65 @@ abstract public class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         return "";
     }
 
-    public GridPane toGridPane(){
-        GridPane grid = new GridPane();
+    public void toGridPane(GridPane grid){
+        grid.setGridLinesVisible(true);
         Vector2d lowerBound = getLowerBoundary();
         Vector2d upperBound = getUpperBoundary();
+
+        final String cssLayout = "-fx-border-color: black;\n" +
+                "-fx-border-insets: 0;\n" +
+                "-fx-border-width: 1;\n" +
+                "-fx-border-style: solid;\n";
 
 
         for (int i = lowerBound.y; i <= upperBound.y; i++){
             for (int j = lowerBound.x; j <= upperBound.x; j++) {
-
-                Label label = new Label(this.objectAtToString(new Vector2d(j, i)));
-                GridPane.setHalignment(label, HPos.CENTER);
-                grid.add(label, j-lowerBound.x+1, Math.abs(i-upperBound.y)+1, 1, 1);
+                Object object = this.objectAt(new Vector2d(j, i));
+                if (object instanceof IMapElement){
+                    IMapElement element = (IMapElement) object;
+                    try {
+                        VBox vBox = guiElementBox.getCell(element);
+                        vBox.setStyle(cssLayout);
+                        GridPane.setHalignment(vBox, HPos.CENTER);
+                        grid.add(vBox, j-lowerBound.x+1, Math.abs(i-upperBound.y)+1, 1, 1);
+                    } catch (FileNotFoundException e){
+                        System.out.println(e.getMessage());
+                    }
+                } else {
+                    VBox vBox = new VBox();
+                    vBox.setStyle(cssLayout);
+                    grid.add(vBox, j-lowerBound.x+1, Math.abs(i-upperBound.y)+1, 1, 1);
+                }
             }
         }
-
         Label startLabel = new Label("x/y");
-        GridPane.setHalignment(startLabel, HPos.CENTER);
-        grid.add(startLabel, 0, 0, 1, 1);
+        VBox startBox = new VBox(startLabel);
+        GridPane.setHalignment(startBox, HPos.CENTER);
+        startBox.setStyle(cssLayout);
+        grid.add(startBox, 0, 0, 1, 1);
 
         for (int i = lowerBound.x; i <= upperBound.x; i++){
             Label indexLabel = new Label(Integer.toString(i));
-            GridPane.setHalignment(indexLabel, HPos.CENTER);
-            grid.add(indexLabel, i-lowerBound.x+1, 0, 1, 1);
+            VBox indexBox = new VBox(indexLabel);
+            GridPane.setHalignment(indexBox, HPos.CENTER);
+            indexBox.setStyle(cssLayout);
+            grid.add(indexBox, i-lowerBound.x+1, 0, 1, 1);
         }
 
         for (int i = lowerBound.y; i <= upperBound.y; i++){
             Label indexLabel = new Label(Integer.toString(i));
-            GridPane.setHalignment(indexLabel, HPos.CENTER);
-            grid.add(indexLabel, 0, Math.abs(i-upperBound.y)+1, 1, 1);
+            VBox indexBox = new VBox(indexLabel);
+            GridPane.setHalignment(indexBox, HPos.CENTER);
+            indexBox.setStyle(cssLayout);
+            grid.add(indexBox, 0, Math.abs(i-upperBound.y)+1, 1, 1);
         }
 
         for (int i = lowerBound.x; i <= upperBound.x+1; i++) {
-            grid.getColumnConstraints().add(new ColumnConstraints(20));
+            grid.getColumnConstraints().add(new ColumnConstraints(40));
         }
 
         for (int i = lowerBound.y; i <= upperBound.y+1; i++){
-            grid.getRowConstraints().add(new RowConstraints(20));
+            grid.getRowConstraints().add(new RowConstraints(40));
         }
-        return grid;
     }
 }

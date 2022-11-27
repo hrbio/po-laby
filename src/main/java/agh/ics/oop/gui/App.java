@@ -2,28 +2,72 @@ package agh.ics.oop.gui;
 
 import agh.ics.oop.*;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.HBox;
+
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class App extends Application {
+import java.util.Arrays;
+
+public class App extends Application implements IPositionChangeObserver {
+    AbstractWorldMap map;
+    Stage primaryStage;
+    GridPane grid;
+    Thread engineThread;
+    Button startButton;
+    Button setDirections;
+    TextField inputDirections;
+    SimulationEngine engine;
     public void start(Stage primaryStage){
-        MoveDirection[] directions = new OptionsParser().parse(getParameters().getRaw().toArray(new String[0]));
-        AbstractWorldMap map = new GrassField(10);
-        Vector2d[] positions = { new Vector2d(2,12), new Vector2d(3,8) };
+        this.primaryStage = primaryStage;
+        this.map = new GrassField(10);
+        Vector2d[] positions = { new Vector2d(2,10), new Vector2d(3,8) };
 
-        IEngine engine = new SimulationEngine(directions, map, positions);
-        engine.run();
-        GridPane grid = map.toGridPane();
 
-        grid.setGridLinesVisible(true);
+        this.engine = new SimulationEngine(this.map, positions, this, 300);
 
-        Scene scene = new Scene(grid, 400, 400);
 
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        this.engineThread = new Thread(engine);
+
+        this.startButton = new Button("Start");
+        this.startButton.setOnAction((e) -> {
+            this.grid = new GridPane();
+            Scene scene = new Scene(this.grid, 600, 600);
+            this.primaryStage.setScene(scene);
+            engineThread.start();
+            this.map.toGridPane(grid);
+        });
+        this.startButton.setDisable(true);
+
+        this.inputDirections = new TextField();
+
+        this.setDirections = new Button("Set Directions");
+        this.setDirections.setOnAction((e) -> {
+            MoveDirection[] directions = new OptionsParser().parse(this.inputDirections.getText().split(" +"));
+            this.engine.setDirections(directions);
+            this.startButton.setDisable(false);
+        });
+
+        VBox directionsSection = new VBox(new Label("Podaj ruchy:"),this.inputDirections, this.setDirections);
+
+        HBox menuUI = new HBox(this.startButton,directionsSection);
+        Scene menu = new Scene(menuUI, 600, 600);
+        this.primaryStage.setScene(menu);
+
+        this.primaryStage.show();
+    }
+
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        Platform.runLater(() -> {
+            grid.getChildren().clear();
+            this.map.toGridPane(grid);
+        });
+
     }
 }
